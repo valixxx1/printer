@@ -11,42 +11,74 @@
 
 */
 #include <stdio.h>
-#include <unistd.h>
 #include <string.h>
 #include <math.h>
+#include <stdint.h>
+
+#ifdef __linux__
+
+  #include <unistd.h>
+
+  #define SLEEPTIME_MILS 30
+
+  #define WRITEC(descriptor,ch) write(descriptor, (char*) &ch, 1)
+
+  #define SLEEP(_time) usleep(_time * 1000)
+
+#endif
+
+#ifdef _WIN64
+  #include <Windows.h>
+
+  #define WRITEC(descriptor,ch) printf("%c", ch)
+
+  #define SLEEP(_time) Sleep(_time)
+
+#endif
+
 #include "colors.h"
+
+#define STDOUT 1
+
+#define SLEEPTIME_MILS 30
+
+#define NEWLINE '\n'
+
+#define ERR_FEW_ARGS 1
+#define ERR_NO_FILES 2
+
+typedef int32_t i32;
 
 void _read(FILE* file)
 {
-	int _char;
+	i32 _char;
+
 	_char = fgetc(file);
 	while (_char != EOF) {
-		write(1, (char*) &_char, 1);
+		WRITEC(STDOUT, _char);
 		_char = fgetc(file);
-		usleep(30000);
+		SLEEP(SLEEPTIME_MILS);
 	}
 }
-
-
 
 void title(char* text)
 {
 	rainbow(text);
-	putchar('\n');
-	putchar('\n');
+	putchar(NEWLINE);
+	putchar(NEWLINE);
 }
 
-int main(int argc, char** argv)
+int main(i32 argc, char** argv)
 {
+	FILE *file;
 	if (argc == 1) {
 		puts("No input files!");
-		return 1;
+		return ERR_FEW_ARGS;
 	}
-	FILE *file;
 	file = fopen(argv[1], "r");
 	if (file == NULL) {
 		puts("File does not exist!");
-		return 2;
+		return ERR_NO_FILES;
 	}
 	title(argv[1]);
 	_read(file);

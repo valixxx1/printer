@@ -1,12 +1,3 @@
-/*
-
-Это заголовочный файл colors.h программы
-printer.c для вывода цветного текста.
-
-Создатель: Гершун Валентин
-Даты: 13.01.2024 - 13.01.2024
-
-*/
 void red(char* text){
 	printf("\033[31m%s\033[0m", text);
 }
@@ -65,8 +56,9 @@ void purplec(char text){
 
 void rainbow(char* text)
 {
-	double gradient = 7 / 2 / strlen(text);
-	double rounded;
+	double gradient, rounded;
+
+  gradient = 7 / 2 / strlen(text);
 	for (int i = 0; i < strlen(text); i++){
 		rounded = round(gradient);
 		if (rounded == 0.0){
